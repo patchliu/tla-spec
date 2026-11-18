@@ -193,9 +193,9 @@
 | --- | :---: | --- | :---: | :---: | :---: | :---: |
 | [tla.alloc](spec/memory.md#api-tla-alloc) | 待&#8288;转&#8288;测 | 分配未初始化的片上连续缓冲区 | [2&nbsp;项&#8288;待&#8288;决](tracking/memory.md#memory-001) | [签&#8288;名&#8288;待&#8288;更&#8288;新](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/alloc.py#L27) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
 | [tla.reshape](spec/memory.md#api-tla-reshape) | 待&#8288;转&#8288;测 | 对连续缓冲区做零拷贝 reshape | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L184) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
-| [tla.view](spec/memory.md#api-tla-view) | 待&#8288;转&#8288;测 | 从指针或缓冲区构造共享底层存储的视图。指针源使用 hivm.hir.pointer_cast 与 memref.reinterpret_cast，buffer 源生成 memref.subview | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L130) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
+| [tla.view](spec/memory.md#api-tla-view) | 待&#8288;转&#8288;测 | 从指针或缓冲区构造共享底层存储的视图，GM 指针保留来源，buffer 源生成子视图 | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L130) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
 | [tla.subview](spec/memory.md#api-tla-subview) | 待&#8288;转&#8288;测 | 在已有缓冲区上构造同秩子视图 | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L105) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
-| [tla.fill](spec/memory.md#api-tla-fill) | 待&#8288;转&#8288;测 | 将同一个标量写入 UB 缓冲区的各元素 | 待&#8288;转&#8288;测 | [fill.py](https://github.com/triton-lang/triton-ascend/blob/33819a5b6a9bb503e46da2a6e5962f0cd0c44393/third_party/ascend/language/tla/fill.py#L94) | 刘&#8288;鹏&#8288;程 | Ricky |
+| [tla.fill](spec/memory.md#api-tla-fill) | 待&#8288;转&#8288;测 | 将同一个标量写入 UB 缓冲区的各元素 | [1&nbsp;项&#8288;待&#8288;决](tracking/memory.md#memory-003) | [fill.py](https://github.com/triton-lang/triton-ascend/blob/33819a5b6a9bb503e46da2a6e5962f0cd0c44393/third_party/ascend/language/tla/fill.py#L94) | 刘&#8288;鹏&#8288;程 | Ricky |
 
 <a name="sync-index"></a>
 
@@ -218,7 +218,7 @@
 
 | 接口 | 状态 | 用途 | 评审 | 源码 | 设计 | 实现 |
 | --- | :---: | --- | :---: | :---: | :---: | :---: |
-| [tla.program_id](spec/schedule.md#api-tla-program-id) | 待&#8288;转&#8288;测 | 返回指定 launch 网格轴的当前 program ID | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-001) | 待&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
+| [tla.program_id](spec/schedule.md#api-tla-program-id) | 待&#8288;转&#8288;测 | 返回指定 launch 网格轴的当前 program ID | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-001) | [PR&nbsp;#3268](https://github.com/triton-lang/triton-ascend/pull/3268) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 | [tla.annotate_multi_buffer](spec/schedule.md#api-tla-annotate-multi-buffer) | 待&#8288;转&#8288;测 | 给缓冲区添加多缓冲版本数注解 | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-002) | 待&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | — |
 
 <a name="language-index"></a>
@@ -231,7 +231,7 @@
 | [~~tla.symbolic~~](spec/language.md#api-tla-symbolic) | 不&#8288;需&#8288;要 | 拟构造带名称的符号表达式。动态标量可由内核形参提供 | [已&#8288;关&#8288;闭](tracking/language.md#language-002) | 未&#8288;找&#8288;到&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | — |
 | [tla.truncmod](spec/language.md#api-tla-truncmod) | 待&#8288;转&#8288;测 | 计算向零截断除法的余数 | 未&#8288;登&#8288;记 | [math.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/math.py#L49) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 | [tl.assume](spec/language.md#api-tl-assume) | 不&#8288;转&#8288;测 | 向编译器承诺条件成立 | 未&#8288;登&#8288;记 | [core.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/python/triton/language/core.py#L2950) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
-| [tla.where](spec/language.md#api-tla-where) | 待&#8288;转&#8288;测 | 根据标量条件或向量谓词做逐元素选择 | 未&#8288;登&#8288;记 | [selection.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/selection.py#L89) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
+| [tla.where](spec/language.md#api-tla-where) | 待&#8288;转&#8288;测 | 根据布尔条件选择一个标量 | 未&#8288;登&#8288;记 | [selection.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/selection.py#L89) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 
 <a name="dtype-index"></a>
 

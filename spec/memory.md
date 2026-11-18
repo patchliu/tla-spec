@@ -41,7 +41,7 @@ def example():
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `src` | 源数据 | tla.buffer | 地址空间及数据类型继承源缓冲区 | 源必须是静态连续 row-major 缓冲区。元素数保持不变。 | 必填 |
+| `src` | 源数据 | tla.buffer | 地址空间及数据类型继承源缓冲区 | 源的静态 strides 必须等于其形状对应的 row-major strides。允许非零或动态 offset，结果继承 offset。 | 必填 |
 | `shape` | 逻辑形状 | tuple[int, ...] / list[int] | 非空正整数组 | reshape 后元素总数相同。 | 必填 |
 
 **调用示例**
@@ -65,13 +65,17 @@ def example(x_ub, y):
 
 返回：tla.buffer。
 
+GM 指针的偏移按有符号 64 位元素索引计算，保留 kernel 参数的指针来源。片上指针走地址绑定，形成 hivm.hir.pointer_cast 和 memref.reinterpret_cast。buffer 源生成 memref.subview。指针源的访问范围由调用者保证。
+
+用例路径为 tla_ut/scope/view_address_space.py。
+
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `src` | 源数据 | 标量 Triton 指针 / tla.buffer | 指针源继承指针元素类型；GM 元素必须为整字节宽的整数或浮点 | buffer 源保持 dtype、地址空间和原 pitch。 | 必填 |
+| `src` | 源数据 | 标量 Triton 指针 / tla.buffer | 指针源继承指针元素类型；GM 元素必须为整字节宽的整数或浮点 | buffer 源保持 dtype 和地址空间，输出 stride 为源 stride 与相对步长的乘积。 | 必填 |
 | `shape` | 逻辑形状 | tuple[int, ...] / list[int] | 非空正整数组 | 按元素计。 | 必填 |
 | `strides` | 各轴步长 | tuple[int, ...] / list[int] / None | 非空正整数组 / None | 与对应视图秩相同。省略时指针源用 row-major，buffer 源用单位相对步长。 | None |
-| `offsets` | 基于源地址或视图的元素偏移 | tuple[int / 标量整数 tl.tensor, ...] / None | 按元素计的整数偏移 / None | 维数须匹配。静态子视图越界拒绝，动态偏移由调用者保证。 | None |
-| `space` | 指定地址空间 | 编译期 str / tla.AddressSpace | 地址空间：GM / UB / L1 / L0A / L0B / L0C / SSBUF / BT / FB | 指针源指定目标空间。buffer 源要求保留默认参数。 | 'gm' |
+| `offsets` | 基于源地址或视图的元素偏移 | 整数标量组成的 tuple / None | 按元素计的整数偏移 / None | 维数须匹配。静态子视图越界拒绝，动态偏移由调用者保证。 | None |
+| `space` | 指定地址空间 | 编译期 str / tla.AddressSpace | 地址空间：GM / UB / L1 / L0A / L0B / L0C / SSBUF / BT / FB | 指针源的字符串使用小写，亦可传对应的 tla.AddressSpace。buffer 源保留默认参数。 | 'gm' |
 
 **调用示例**
 
@@ -97,9 +101,9 @@ def example(x, dst_ub):
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
 | `src` | 源数据 | tla.buffer | 地址空间及数据类型继承源缓冲区 | 同秩切片，结果与源共享存储。 | 必填 |
-| `offsets` | 基于源地址或视图的元素偏移 | tuple[int / 标量整数 tl.tensor, ...] | 按元素计的整数偏移 | 维数须匹配。静态子视图越界拒绝，动态偏移由调用者保证。 | 必填 |
+| `offsets` | 相对于源视图的各轴逻辑元素偏移 | 整数标量组成的 tuple | 按元素计的整数偏移 | 维数须匹配。静态子视图越界拒绝，动态偏移由调用者保证。 | 必填 |
 | `sizes` | 各轴要截取的元素个数 | tuple[int, ...] / list[int] | 非空正整数组 | 按元素计。 | 必填 |
-| `strides` | 各轴步长 | tuple[int, ...] / list[int] / None | 非空正整数组 / None | 与对应视图秩相同。省略时指针源用 row-major，buffer 源用单位相对步长。 | None |
+| `strides` | 各轴步长 | tuple[int, ...] / list[int] / None | 非空正整数组 / None | 与对应视图秩相同。省略时各轴相对步长为 1。结果 stride 为源 stride 与相对步长的乘积。 | None |
 
 **调用示例**
 
@@ -122,9 +126,13 @@ def example(x_ub, y):
 
 返回：None。将标量广播到整个目标缓冲区，编译表示为标量 `hivm.hir.vbrc`。
 
+Ascend 950PR 暂只验收前端校验和 Adapter IR。设备链接问题见 [MEMORY-003](../tracking/memory.md#memory-003)。
+
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `dst` | 待填充的缓冲区 | tla.buffer | UB；float32 / bfloat16 / int32；1D / 2D | 连续 row-major，offset=0，元素数为正且不超过 UB 容量；允许非对齐尾部。 | 必填 |
-| `value` | 广播标量 | int / float / 标量 tl.tensor | 可转换为目标元素类型的标量 | 不接受 bool 或块 tensor；int32 目标不接受浮点值，常量整数须位于 int32 范围。 | 必填 |
+| `dst` | 待填充的缓冲区 | tla.buffer | 地址空间：UB<br>数据类型：float32 / bfloat16 / int32<br>形状：1D / 2D | 连续 row-major，offset 必须已知且为 0。元素数为正且不超过 UB 容量，允许非对齐尾部。 | 必填 |
+| `value` | 广播标量 | 数值标量 | int32 目标：整数值，范围为 −2³¹ 至 2³¹−1。<br>float32 / bfloat16 目标：整数或浮点标量，按目标 dtype 转换。 | 前端拒绝 Python bool。int32 目标拒绝浮点值。 | 必填 |
 
-不支持非零或动态偏移、带行间距的非连续视图及其他地址空间。标量按目标类型转换；调用方须确保生产、消费及复用缓冲区的依赖有正确同步。
+当前前端拒绝 subview 结果，包括静态零偏移的子视图。调用方须确保生产、消费及复用缓冲区的依赖有正确同步。
+
+用例路径为 tla_ut/memory/fill.py 和 tla_ut/memory/fill_frontend_contract.py。

@@ -22,3 +22,15 @@
 - 移除 `versions`。需要多缓冲时改用 [tla.annotate_multi_buffer](../spec/schedule.md#api-tla-annotate-multi-buffer)。
 
 结论：设计已确认，待实现。当前签名仍接收这两个参数。实现更新后核对旧调用的迁移、新签名和默认 UB 行为。
+
+<a name="memory-003"></a>
+
+## MEMORY-003 · tla.fill 的 Ascend 950PR 设备模板
+
+[查看规格](../spec/memory.md#api-tla-fill)
+
+- 950PR 上，bfloat16、int32、float32 的一维和二维 fill 设备用例在链接阶段缺少对应的标量广播模板。
+- 前端与 Adapter IR 用例覆盖参数校验、偏移拒绝和标量 hivm.hir.vbrc。
+- 待目标侧补齐 lowering 或模板后，使用专用用例验证设备编译与数值，并重复验证零偏移的合法 reshape。
+
+结论：待决。保留前端校验和 Adapter IR 用例。

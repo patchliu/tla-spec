@@ -1,4 +1,4 @@
-# 主机接口接口规格
+# 主机接口规格
 
 [返回接口目录](../README.md)
 
@@ -19,8 +19,10 @@
 
 ```python
 @tla.jit
-def example(out_ub):
-    tla.fill(out_ub, 0)
+def example(x, y):
+    tile = tla.alloc((64,), tl.float32)
+    tla.load_gm_to_ub(tla.view(x, (64,)), tile)
+    tla.store_ub_to_gm(tile, tla.view(y, (64,)))
 ```
 
 仓库测试：[tla_ut/scope/pointer_abi.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/scope/pointer_abi.py#L12)。
