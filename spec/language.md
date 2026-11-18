@@ -2,21 +2,23 @@
 
 [返回接口目录](../README.md)
 
+本页的标量为编译期 Python 值，或在 kernel 中以秩 0 的 tl.tensor 表示的运行时值。形状为 (1,) 的块张量仍属于块张量。SIMD 向量寄存器由 tla.simd 接口处理。
+
 <a name="api-tla-sqrt"></a>
 
 ## tla.sqrt
 
 签名：`tla.sqrt(x)`
 
-返回：同 dtype 的标量或 SIMD 向量。向量结果保持 lane 数。
+返回：FP32 标量。
 
-编译表示：标量为 math.sqrt，SIMD 为 ave.hir.vsqrt。
+编译表示：math.sqrt。SIMD 向量平方根使用 [tla.simd.vsqrt](simd.md#api-tla-simd-vsqrt)。
 
-Ascend 950PR 标量抽测覆盖 FP32 负数、零、正有限值、正无穷及 NaN。SIMD 的元素类型依对应 AVE 操作。
+Ascend 950PR 标量抽测覆盖 FP32 负数、零、正有限值、正无穷及 NaN。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `x` | 输入值 | float / 标量 tl.tensor / tla.vector | 标量：float32<br>SIMD 向量：float16 / float32 | Python float 必须被 Triton 推断为 float32。输出保持数据类型，向量保持 lane 数。 | 必填 |
+| `x` | 输入值 | Python float / 运行时 FP32 标量 | 数据类型：float32 | Python float 必须被 Triton 推断为 float32。 | 必填 |
 
 **调用示例**
 
@@ -48,8 +50,8 @@ def example():
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `a` | 第一个操作数 | int / 标量整数 tl.tensor | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
-| `b` | 第二个操作数 | int / 标量整数 tl.tensor | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
+| `a` | 第一个操作数 | Python int / 运行时整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
+| `b` | 第二个操作数 | Python int / 运行时整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
 
 **调用示例**
 
@@ -89,17 +91,17 @@ def example(x):
 
 签名：`tla.where(condition, x, y)`
 
-返回：Triton 类型提升后的标量或同类型 SIMD 向量。
+返回：Triton 类型提升后的标量。
 
-编译表示：标量为 arith.select，SIMD 谓词为 ave.hir.vsel。编译期 bool 选择同类型 SIMD 向量时直接返回对应分支。
+编译表示：arith.select。两路值在选择前求值。SIMD 谓词选择使用 [tla.simd.vsel](simd.md#api-tla-simd-vsel)。
 
-Ascend 950PR 已验证 FP32 运行时标量条件的两路选择，包括无穷和 NaN。
+Ascend 950PR 已验证运行时 int1 条件和 FP32 分支值，包括无穷和 NaN。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `condition` | 选择条件 | 编译期 bool / 标量 int1 tl.tensor / tla.vector（int1 谓词） | 标量：int1<br>SIMD：同 lanes 的 int1 谓词 | 运行时标量条件仅用于两个标量分支。编译期 bool 可选择标量分支或一对同类型向量。 | 必填 |
-| `x` | 输入值 | bool / int / float / 标量 tl.tensor / tla.vector | 标量：bool / 数值标量<br>SIMD：同 dtype、同 lanes 的一对向量 | 两分支均提前求值。 | 必填 |
-| `y` | 条件为假时选择的值 | bool / int / float / 标量 tl.tensor / tla.vector | 标量：bool / 数值标量<br>SIMD：同 dtype、同 lanes 的一对向量 | 两分支均提前求值。 | 必填 |
+| `condition` | 选择条件 | 编译期 bool / 运行时布尔标量 | 数据类型：int1 | 必须是布尔条件。 | 必填 |
+| `x` | 条件为真时选择的值 | Python bool / int / float / 运行时标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
+| `y` | 条件为假时选择的值 | Python bool / int / float / 运行时标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
 
 **调用示例**
 
@@ -109,7 +111,7 @@ def example(x):
     value = tla.where(x > 0, x, 0)
 ```
 
-仓库测试：[tla_ut/simd/add_cmp.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/simd/add_cmp.py#L114)。
+用例路径为 tla_ut/vector/vector_type.py，入口为 test_scalar_where_ir。
 
 ## 范围说明
 

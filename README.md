@@ -231,7 +231,7 @@
 | [~~tla.symbolic~~](spec/language.md#api-tla-symbolic) | 不&#8288;需&#8288;要 | 拟构造带名称的符号表达式。动态标量可由内核形参提供 | [已&#8288;关&#8288;闭](tracking/language.md#language-002) | 未&#8288;找&#8288;到&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | — |
 | [tla.truncmod](spec/language.md#api-tla-truncmod) | 待&#8288;转&#8288;测 | 计算向零截断除法的余数 | 未&#8288;登&#8288;记 | [math.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/math.py#L49) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 | [tl.assume](spec/language.md#api-tl-assume) | 不&#8288;转&#8288;测 | 向编译器承诺条件成立 | 未&#8288;登&#8288;记 | [core.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/python/triton/language/core.py#L2950) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
-| [tla.where](spec/language.md#api-tla-where) | 待&#8288;转&#8288;测 | 根据标量条件或向量谓词做逐元素选择 | 未&#8288;登&#8288;记 | [selection.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/selection.py#L89) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
+| [tla.where](spec/language.md#api-tla-where) | 待&#8288;转&#8288;测 | 根据布尔条件选择一个标量 | 未&#8288;登&#8288;记 | [selection.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/selection.py#L89) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 
 <a name="dtype-index"></a>
 
