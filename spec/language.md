@@ -8,9 +8,11 @@
 
 签名：`tla.sqrt(x)`
 
-返回：与所选标量或向量路径对应的结果。
+返回：同 dtype 的标量或 SIMD 向量。向量结果保持 lane 数。
 
-编译表示：hivm.hir.vsqrt。
+编译表示：标量为 math.sqrt，SIMD 为 ave.hir.vsqrt。
+
+Ascend 950PR 标量抽测覆盖 FP32 负数、零、正有限值、正无穷及 NaN。SIMD 的元素类型依对应 AVE 操作。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -40,7 +42,9 @@ def example():
 
 签名：`tla.truncmod(a, b)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：按 Triton 整数提升得到的秩为 0 的整数 tl.tensor。
+
+整数除法向零截断，非零余数与 a 同号。编译期整数除数为 0 时在前端报错。Ascend 950PR 已验证 int32 正负除数组合和有符号最小值对 3 的余数。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -85,13 +89,15 @@ def example(x):
 
 签名：`tla.where(condition, x, y)`
 
-返回：与所选标量或向量路径对应的结果。
+返回：Triton 类型提升后的标量或同类型 SIMD 向量。
 
-编译表示：hivm.hir.vsel。
+编译表示：标量为 arith.select，SIMD 谓词为 ave.hir.vsel。编译期 bool 选择同类型 SIMD 向量时直接返回对应分支。
+
+Ascend 950PR 已验证 FP32 运行时标量条件的两路选择，包括无穷和 NaN。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `condition` | 选择条件 | 编译期 bool / 标量 int1 tl.tensor / tla.vector（int1 谓词） | 标量：int1<br>SIMD：同 lanes 的 int1 谓词 | 运行时标量条件只选择标量分支。 | 必填 |
+| `condition` | 选择条件 | 编译期 bool / 标量 int1 tl.tensor / tla.vector（int1 谓词） | 标量：int1<br>SIMD：同 lanes 的 int1 谓词 | 运行时标量条件仅用于两个标量分支。编译期 bool 可选择标量分支或一对同类型向量。 | 必填 |
 | `x` | 输入值 | bool / int / float / 标量 tl.tensor / tla.vector | 标量：bool / 数值标量<br>SIMD：同 dtype、同 lanes 的一对向量 | 两分支均提前求值。 | 必填 |
 | `y` | 条件为假时选择的值 | bool / int / float / 标量 tl.tensor / tla.vector | 标量：bool / 数值标量<br>SIMD：同 dtype、同 lanes 的一对向量 | 两分支均提前求值。 | 必填 |
 
