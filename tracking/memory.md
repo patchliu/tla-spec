@@ -29,8 +29,8 @@
 
 [查看规格](../spec/memory.md#api-tla-fill)
 
-- 使用 CANN 9.1 和 2aa6cc727 wheel，分别为 bfloat16、int32、float32 创建连续 UB 缓冲区，调用 fill 后搬回 GM。一维 (64,) 和二维 (8, 8) 共六种组合在设备链接阶段失败。
-- 专用用例的 16 项 Adapter IR 和偏移拒绝检查通过。Adapter IR 发出 hivm.hir.vbrc。设备链接报缺少 `_mlir_ciface_broadcast_scalar_{bfloat16_t,int32_t,float}_to_{1d,2d}` 对应符号。`tla_ut/blacklist.py` 已跳过 `memory/fill.py`。
+- 950PR 上，bfloat16、int32、float32 的一维和二维 fill 设备用例在链接阶段缺少对应的标量广播模板。
+- 前端与 Adapter IR 用例覆盖参数校验、偏移拒绝和标量 hivm.hir.vbrc。
 - 待目标侧补齐 lowering 或模板后，使用专用用例验证设备编译与数值，并重复验证零偏移的合法 reshape。
 
 结论：待决。保留前端校验和 Adapter IR 用例。

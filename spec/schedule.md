@@ -9,7 +9,7 @@
 
 计划签名：`tla.program_id(axis)`
 
-返回：指定轴的程序实例编号，为 int32 标量 tl.tensor。
+返回：指定轴的程序实例编号，为 int32 标量。
 
 语义沿用 tl.program_id。新入口在 [triton-ascend PR #3268](https://github.com/triton-lang/triton-ascend/pull/3268) 已验证轴 0 / 1 / 2、非法轴以及三轴网格读回，主线进度见 [SCHEDULE-001](../tracking/schedule.md#schedule-001)。
 

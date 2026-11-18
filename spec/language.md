@@ -2,8 +2,6 @@
 
 [返回接口目录](../README.md)
 
-本页的标量为编译期 Python 值，或在 kernel 中以秩 0 的 tl.tensor 表示的运行时值。形状为 (1,) 的块张量仍属于块张量。SIMD 向量寄存器由 tla.simd 接口处理。
-
 <a name="api-tla-sqrt"></a>
 
 ## tla.sqrt
@@ -18,7 +16,7 @@ Ascend 950PR 标量抽测覆盖 FP32 负数、零、正有限值、正无穷及 
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `x` | 输入值 | Python float / 运行时 FP32 标量 | 数据类型：float32 | Python float 必须被 Triton 推断为 float32。 | 必填 |
+| `x` | 输入值 | 标量 | 数据类型：float32 | Python float 必须被 Triton 推断为 float32。 | 必填 |
 
 **调用示例**
 
@@ -44,14 +42,14 @@ def example():
 
 签名：`tla.truncmod(a, b)`
 
-返回：按 Triton 整数提升得到的秩为 0 的整数 tl.tensor。
+返回：按 Triton 整数提升确定 dtype 的整数标量。
 
 整数除法向零截断，非零余数与 a 同号。编译期整数除数为 0 时在前端报错。Ascend 950PR 已验证 int32 正负除数组合和有符号最小值对 3 的余数。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `a` | 第一个操作数 | Python int / 运行时整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
-| `b` | 第二个操作数 | Python int / 运行时整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 不接受 bool。禁止混合 signed 和 unsigned tensor。除数非零，signed 最小值 ÷ −1 未定义。 | 必填 |
+| `a` | 第一个操作数 | 整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 排除布尔标量和有符号、无符号运行时标量混用。除数须非零，有符号最小值除以 −1 时行为未定义。 | 必填 |
+| `b` | 第二个操作数 | 整数标量 | 数据类型：<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32<br>B64：int64 / uint64 | 排除布尔标量和有符号、无符号运行时标量混用。除数须非零，有符号最小值除以 −1 时行为未定义。 | 必填 |
 
 **调用示例**
 
@@ -75,7 +73,7 @@ def example(x):
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `cond` | 必须成立的条件 | 标量 int1 tl.tensor / bool | 数据类型：int1 | 条件为假时行为未定义。 | 必填 |
+| `cond` | 必须成立的条件 | 布尔标量 | 数据类型：int1 | 条件为假时行为未定义。 | 必填 |
 
 **调用示例**
 
@@ -99,9 +97,9 @@ Ascend 950PR 已验证运行时 int1 条件和 FP32 分支值，包括无穷和 
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `condition` | 选择条件 | 编译期 bool / 运行时布尔标量 | 数据类型：int1 | 必须是布尔条件。 | 必填 |
-| `x` | 条件为真时选择的值 | Python bool / int / float / 运行时标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
-| `y` | 条件为假时选择的值 | Python bool / int / float / 运行时标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
+| `condition` | 选择条件 | 布尔标量 | 数据类型：int1 | — | 必填 |
+| `x` | 条件为真时选择的值 | 标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
+| `y` | 条件为假时选择的值 | 标量 | 数据类型：bool / 整数 / 浮点 | 遵循 Triton 标量类型提升。 | 必填 |
 
 **调用示例**
 
