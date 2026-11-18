@@ -67,7 +67,7 @@ def example(x_ub, y):
 
 GM 指针的偏移按有符号 64 位元素索引计算，保留 kernel 参数的指针来源。片上指针走地址绑定，形成 hivm.hir.pointer_cast 和 memref.reinterpret_cast。buffer 源生成 memref.subview。指针源的访问范围由调用者保证。
 
-字符串 'gm' 与 tla.AddressSpace.GM 的一致性修复见 [triton-ascend PR #3268](https://github.com/triton-lang/triton-ascend/pull/3268)。回归覆盖动态偏移 0 和 64 的 FP32 GM 搬运读回，以及两种写法的 IR 和 int1 指针拒绝。用例路径为 tla_ut/scope/view_address_space.py。
+用例路径为 tla_ut/scope/view_address_space.py。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
