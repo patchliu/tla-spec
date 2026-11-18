@@ -193,9 +193,9 @@
 | --- | :---: | --- | :---: | :---: | :---: | :---: |
 | [tla.alloc](spec/memory.md#api-tla-alloc) | 待&#8288;转&#8288;测 | 分配未初始化的片上连续缓冲区 | [2&nbsp;项&#8288;待&#8288;决](tracking/memory.md#memory-001) | [签&#8288;名&#8288;待&#8288;更&#8288;新](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/alloc.py#L27) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
 | [tla.reshape](spec/memory.md#api-tla-reshape) | 待&#8288;转&#8288;测 | 对连续缓冲区做零拷贝 reshape | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L184) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
-| [tla.view](spec/memory.md#api-tla-view) | 待&#8288;转&#8288;测 | 从指针或缓冲区构造共享底层存储的视图。指针源使用 hivm.hir.pointer_cast 与 memref.reinterpret_cast，buffer 源生成 memref.subview | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L130) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
+| [tla.view](spec/memory.md#api-tla-view) | 待&#8288;转&#8288;测 | 从指针或缓冲区构造共享底层存储的视图，GM 指针保留来源，buffer 源生成子视图 | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L130) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
 | [tla.subview](spec/memory.md#api-tla-subview) | 待&#8288;转&#8288;测 | 在已有缓冲区上构造同秩子视图 | 未&#8288;登&#8288;记 | [view.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/language/tla/view.py#L105) | 刘&#8288;鹏&#8288;程 | 刘&#8288;鹏&#8288;程 |
-| [tla.fill](spec/memory.md#api-tla-fill) | 待&#8288;转&#8288;测 | 将同一个标量写入 UB 缓冲区的各元素 | 待&#8288;转&#8288;测 | [fill.py](https://github.com/triton-lang/triton-ascend/blob/33819a5b6a9bb503e46da2a6e5962f0cd0c44393/third_party/ascend/language/tla/fill.py#L94) | 刘&#8288;鹏&#8288;程 | Ricky |
+| [tla.fill](spec/memory.md#api-tla-fill) | 待&#8288;转&#8288;测 | 将同一个标量写入 UB 缓冲区的各元素 | [1&nbsp;项&#8288;待&#8288;决](tracking/memory.md#memory-003) | [fill.py](https://github.com/triton-lang/triton-ascend/blob/33819a5b6a9bb503e46da2a6e5962f0cd0c44393/third_party/ascend/language/tla/fill.py#L94) | 刘&#8288;鹏&#8288;程 | Ricky |
 
 <a name="sync-index"></a>
 
