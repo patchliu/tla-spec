@@ -22,6 +22,7 @@
 | `params.collapse_reassociation` | 指定连续逻辑轴的合并关系 | 编译期 tuple[tuple[int, ...], ...] 或 None | None 或轴索引分组。索引从 0 到原秩−1 | 分组按轴序组织，覆盖参与变形的维度，不重复。 | None |
 
 共同约束：此接口在前端固定为 UB→L1，降低为 hivm.hir.copy。RegBase UB→L1 模板注册的元素类型比通用 CopyOp 窄。默认配置要求源和目的形状相容。目标末维连续，调用前应准备相容的物理布局。Vector 生产的数据跨核供 Cube 消费时需要显式同步。
+1
 
 **调用示例**
 
