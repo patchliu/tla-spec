@@ -35,7 +35,9 @@ def example(src_ub, y):
 
 签名：`tla.select(condition, true_value, false_value)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：分支提升后 dtype 的秩为 0 的 tl.tensor。
+
+两个值分支提前求值。条件沿用 tl.where 到 int1 的转换，分支按 Triton 类型提升。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -59,7 +61,9 @@ def example(x):
 
 签名：`tla.abs(x)`
 
-返回：与所选标量或向量路径对应的结果。
+返回：与输入转换后 dtype 一致的秩为 0 的 tl.tensor。
+
+无符号整数及 bool 保持原值。有符号整数最小值按原 dtype 保留，例如 int32 的 −2³¹。浮点路径清除符号位，NaN payload 不作保证。Ascend 950PR 已验证 int32 最小值及邻近边界。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -100,7 +104,7 @@ def example(x, y):
 
 签名：`tla.cast(input, dtype, fp_downcast_rounding=None, bitcast=False)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：目标 dtype 的秩为 0 的 tl.tensor。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -125,7 +129,9 @@ def example(x):
 
 签名：`tla.cdiv(x, div)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：按 Triton 类型提升得到的秩为 0 的整数 tl.tensor。
+
+计算式为 (x + (div − 1)) // div。验收范围为 x ≥ 0、div > 0，中间结果 div − 1 与 x + (div − 1) 均须在实际计算 dtype 的可表示范围内。Ascend 950PR 已验证 int32 整除、非整除以及中间和恰好等于 INT32_MAX 的边界。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -148,14 +154,16 @@ def example(x):
 
 签名：`tla.clamp(x, min, max, propagate_nan=tl.PropagateNan.NONE)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：提升后的浮点 dtype 的秩为 0 的 tl.tensor。
+
+x、min、max 经类型提升后须为浮点类型。min 和 max 均不得为 NaN，且 min ≤ max。Ascend 950PR 的 FP32 正例使用运行时 x 和可表示为 FP32 的有序常量边界。详见[标量比较设备范围](#scalar-comparison-test-scope)。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
 | `x` | 输入值 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
 | `min` | 下界 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
 | `max` | 上界 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
-| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | ALL 传播 NaN。NONE 的目标 NaN 行为应按单 NaN 和双 NaN 分别验证。 | tl.PropagateNan.NONE |
+| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | 仅作用于 x。Ascend 950PR 的设备正例使用 NONE，x 不含 NaN。ALL 仅纳入 IR 验证。 | tl.PropagateNan.NONE |
 
 **调用示例**
 
@@ -263,13 +271,15 @@ def example(x):
 
 签名：`tla.maximum(a, b, propagate_nan=tl.PropagateNan.NONE)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：操作数提升后的 dtype 的秩为 0 的 tl.tensor。
+
+浮点设备验收见[标量比较设备范围](#scalar-comparison-test-scope)。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
 | `a` | 第一个操作数 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
 | `b` | 第二个操作数 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
-| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | ALL 传播 NaN。NONE 的目标 NaN 行为应按单 NaN 和双 NaN 分别验证。 | tl.PropagateNan.NONE |
+| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | Ascend 950PR 的浮点设备正例使用 NONE，两个输入均不含 NaN。ALL 仅纳入 IR 验证。 | tl.PropagateNan.NONE |
 
 **调用示例**
 
@@ -287,11 +297,11 @@ def example(x, y):
 
 签名：`tla.max_value(dtype)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：指定 dtype 的最大有限值，为秩为 0 的 tl.tensor。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `dtype` | 元素类型 | 编译期 tl.dtype | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16 / bfloat16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 / float64 | — | 必填 |
+| `dtype` | 元素类型 | 编译期 tl.dtype | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16 / bfloat16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 / float64 | float64 常量仅纳入前端与 IR 验证。 | 必填 |
 
 **调用示例**
 
@@ -309,13 +319,15 @@ def example():
 
 签名：`tla.minimum(a, b, propagate_nan=tl.PropagateNan.NONE)`
 
-返回：计算结果，类型由操作数或显式 dtype 决定。
+返回：操作数提升后的 dtype 的秩为 0 的 tl.tensor。
+
+浮点设备验收见[标量比较设备范围](#scalar-comparison-test-scope)。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
 | `a` | 第一个操作数 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
 | `b` | 第二个操作数 | bool / int / float / 标量 tl.tensor | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 tensor。 | 必填 |
-| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | ALL 传播 NaN。NONE 的目标 NaN 行为应按单 NaN 和双 NaN 分别验证。 | tl.PropagateNan.NONE |
+| `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | Ascend 950PR 的浮点设备正例使用 NONE，两个输入均不含 NaN。ALL 仅纳入 IR 验证。 | tl.PropagateNan.NONE |
 
 **调用示例**
 
@@ -367,3 +379,11 @@ def example(x):
 参考实现见 [triton-ascend PR #3268](https://github.com/triton-lang/triton-ascend/pull/3268)。用 Ascend 950PR、`2aa6cc727` wheel 和该 PR 改动验证了三项接口，15 项检查全部通过。转测进度见首页。
 
 实现路径：`tla/scalar.py`。用例路径：`tla_ut/scalar/unary_math.py`。
+
+<a name="scalar-comparison-test-scope"></a>
+
+## 标量比较设备范围
+
+Ascend 950PR 使用 CANN 9.1、2aa6cc727 wheel 和本次 TLA 源码验证。clamp、maximum、minimum 的 FP32 默认模式通过常规值、边界值和正无穷的读回验证。该范围要求操作数不含 NaN，clamp 还要求边界有序。
+
+三者的 FP32 ALL 模式在相同工具链的设备指令选择阶段失败，诊断涉及 fmaximum 或 fminimum。转测中的设备正向矩阵使用 NONE。其他 dtype 或模式按对应接口的前端及 IR 范围验证，设备组合按目标单独补齐。
