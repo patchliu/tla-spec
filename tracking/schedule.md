@@ -10,7 +10,7 @@
 
 - 在 TLA 命名空间提供 `program_id(axis)`，沿用现有轴语义。核对新入口在 TLA 编译链路中的 0 / 1 / 2 轴映射及非法轴校验。
 
-结论：设计已确认，待实现。当前参照路径为 `tl.program_id`。
+结论：设计已确认。[triton-ascend PR #3268](https://github.com/triton-lang/triton-ascend/pull/3268) 已实现并通过 6 项检查，待合入主线。
 
 <a name="schedule-002"></a>
 

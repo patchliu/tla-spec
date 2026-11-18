@@ -11,7 +11,7 @@
 
 返回：指定轴的程序实例编号，为 int32 标量 tl.tensor。
 
-目标沿用现有 `tl.program_id` 的轴语义。当前 TLA 内核仍使用 `tl.program_id`，新入口的实现见 [SCHEDULE-001](../tracking/schedule.md#schedule-001)。
+语义沿用 tl.program_id。新入口在 [triton-ascend PR #3268](https://github.com/triton-lang/triton-ascend/pull/3268) 已验证轴 0 / 1 / 2、非法轴以及三轴网格读回，主线进度见 [SCHEDULE-001](../tracking/schedule.md#schedule-001)。
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
@@ -25,7 +25,7 @@ def example():
     block = tla.program_id(0)
 ```
 
-现有 `tl.program_id` 路径的仓库测试：[tla_ut/vector/fused_weight.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/vector/fused_weight.py#L35)。
+新入口用例路径为 tla_ut/scope/program_id.py。已有 tl.program_id 用例：[tla_ut/vector/fused_weight.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/vector/fused_weight.py#L35)。
 
 <a name="api-tla-annotate-buffer-versions"></a>
 <a name="api-tla-annotate-multi-buffer"></a>
@@ -41,7 +41,7 @@ def example():
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
 | `buf` | 要标注的缓冲区 | tla.buffer | 可添加 annotation.mark 的 buffer | — | 必填 |
-| `versions` | 缓冲区版本数 | 编译期 int | 正整数 | 1 不添加版本标记，>1 添加 hivm.multi_buffer。 | 必填 |
+| `versions` | 缓冲区版本数 | 编译期 int | 1 至 2³¹−1（现有版本标记的 i32 表示范围） | 1 不添加标记，大于 1 添加 hivm.multi_buffer。实际可分配版本数还受目标内存规划约束。 | 必填 |
 
 计划调用示例
 

@@ -218,7 +218,7 @@
 
 | 接口 | 状态 | 用途 | 评审 | 源码 | 设计 | 实现 |
 | --- | :---: | --- | :---: | :---: | :---: | :---: |
-| [tla.program_id](spec/schedule.md#api-tla-program-id) | 待&#8288;转&#8288;测 | 返回指定 launch 网格轴的当前 program ID | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-001) | 待&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
+| [tla.program_id](spec/schedule.md#api-tla-program-id) | 待&#8288;转&#8288;测 | 返回指定 launch 网格轴的当前 program ID | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-001) | [PR&nbsp;#3268](https://github.com/triton-lang/triton-ascend/pull/3268) | 刘&#8288;鹏&#8288;程 | 丁&#8288;泓 |
 | [tla.annotate_multi_buffer](spec/schedule.md#api-tla-annotate-multi-buffer) | 待&#8288;转&#8288;测 | 给缓冲区添加多缓冲版本数注解 | [1&nbsp;项&#8288;待&#8288;决](tracking/schedule.md#schedule-002) | 待&#8288;实&#8288;现 | 刘&#8288;鹏&#8288;程 | — |
 
 <a name="language-index"></a>
