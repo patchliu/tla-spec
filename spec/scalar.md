@@ -2,6 +2,8 @@
 
 [返回接口目录](../README.md)
 
+标量参数可使用对应的编译期 Python 值。运行时标量在 Triton 中用秩 0 的 tl.tensor 表示。
+
 <a name="api-tla-set-atomic"></a>
 
 ## tla.set_atomic
@@ -82,6 +84,8 @@ def example(x):
 ## ^
 
 签名：`lhs ^ rhs`
+
+本节覆盖 Triton XOR 的标量用法。Triton 块张量沿用该运算符的元素级语义。SIMD 向量寄存器使用 [tla.simd.vxor](simd.md#api-tla-simd-vxor)。
 
 返回：计算结果，类型由操作数或显式 dtype 决定。
 
