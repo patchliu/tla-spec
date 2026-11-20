@@ -18,6 +18,8 @@
 
 补充依据：AscendNPU-IR `0e7d8bb2d0d6a39b83996e909eee1b973685e164` 的 `HIVMDMAOps.td::CopyOp` 接受 F32 且要求源、目的同类型；RegBase `Vector/Copy1D.cpp`、`Copy2D.cpp`、`Copy3D.cpp` 均注册 UB→L1 的 float 模板。TLA 的 `copy_ub_to_l1` 直接生成该 copy 路径。核对范围为 IR 类型约束与目标 lowering；本次规格更新未新增设备精度验证。
 
+补充验证：在 Ascend950DT_9582、AscendNPU-IR `1389120d` 的 Process 路径上，FP32 的四维 NZ 物理拷贝与带源行距的二维物理拷贝均经 L1→UB 回读并与参考逐元素精确比对。二维正例的行宽为 8 个元素，源行距为 16 个元素，源行内偏移为 8 个元素。
+
 <a name="cube-002"></a>
 
 ## CUBE-002 · tla.copy_l1_to_ub
@@ -27,6 +29,10 @@
 结论：目的 UB 的有效地址和行间距须满足 32B 对齐，仅保留完整 NZ 源分块及规格中的 dtype。非对齐目的可能触发 MTE 地址错误，不能以末维连续和不越界替代对齐要求。
 
 依据：AscendNPU-IR `c521aba2` 的 `bishengir/lib/Template/lib/RegBase/Cube/l12ub.cpp` 按 fractal 地址执行 32B 搬运；静态地址约束的前端诊断仍需补齐。
+
+待评审扩展：上述设备和后端已验证同类型 FP32 从 (3,2,16,8) NZ 搬至 (32,24) ND，目标行距 32 个元素、行内偏移 8 个元素，源从非零偏移开始。AIC 通过 MTE1 向 AIV sub-block 0 建立依赖。后续使用预排 NZ 数据填充源分配及哨兵块，真机验证了源 stride (384,128,8,1) 和 (640,256,8,1)，分别覆盖仅 N 方向留空和 N、M 两个外层方向留空。两个用例各比较 768 个 FP32 元素，最大绝对误差为 0。5D、类型转换、FP32 C0=16 及末维不连续仍超出扩展范围。
+
+后端依据：AscendNPU-IR `1389120d` 的 `L12UBOp` 经 RegBase `L12UBOpToLibraryCallPattern` 选择 `l12ub.cpp` 中注册的同类型 FP32 四维到二维模板。
 
 <a name="cube-003"></a>
 

@@ -16,6 +16,8 @@ GM↔UB 依据库上已有接口，以及 2026-11-18 的 `tla-programming-api.md
 
 依据：AscendNPU-IR `0e7d8bb2d0d6a39b83996e909eee1b973685e164` 的 `Nd2NzCapabilityProfile.td` 中 C310 同类型能力，以及 `bishengir/lib/Template/lib/RegBase/Cube/compat/DMA/Cbuf/nd2nz.cpp` 的 `REGISTE_ND2NZ(gm, cbuf, 2, 4, float)`。模板以 `32 / sizeof(T)` 计算 C0，因此 FP32 为 8。核对范围为类型能力、目标模板及 TLA builder 路径；本次规格更新未新增设备精度验证。
 
+补充验证：Ascend950DT_9582 和 AscendNPU-IR `1389120d` 的 Process 路径上，(32,24) FP32 ND 输入使用 32 元素行距与 8 元素偏移，回读逐元素精确一致。FP16 缓存回归中，默认路径和显式模式 4 在目标 LLVM IR 分别传递 0 和 4，实机均通过。需在接口表保留 [PR #3267](https://github.com/triton-lang/triton-ascend/pull/3267) 的 MTE2 原生缓存控制契约。
+
 <a name="dma-002"></a>
 
 ## DMA-002 · tla.load_gm_to_ub
