@@ -29,6 +29,10 @@
 - 转换：当前唯一支持的搬运模式为 ND→NZ。不改变元素类型，不提供反向转换、其他重排格式或非对齐尾块填充。
 - 同步：装载完成后才能由矩阵运算读取；复用 L1 缓冲区前须保证先前消费者完成。
 
+![GM ND 到 L1 NZ 的转换，两侧按同一逻辑矩阵标出各自的元素偏移](images/dma/load_gm_to_l1.svg)
+
+将 GM 中的矩阵搬到 L1，由逐行存放的 ND 布局转换为块间按列排列、块内按行存放的 NZ 布局。 [Ascend C 算子开发指南 · 数据格式](https://www.hiascend.com/doc_center/source/zh/canncommercial/900/programug/Ascendcopdevg/atlas_ascendc_10_0037.html)
+
 **调用示例**
 
 ```python
@@ -143,6 +147,10 @@ def example(x, y):
 - 长度：单次有效数据不超过 64KiB，即当前两种类型最多 32768 个元素；存在偏移、行间距或共享分配时，可用长度相应减小。
 - 地址：源、目的完整访问跨度均不得越界，不提供非完整分块的自动填充。
 - 同步：调用方须保证装载、搬运、矩阵运算以及缓冲区复用之间的依赖。
+
+![Ascend950 上 L1 经 L0A 和 L0B 向 Cube 提供矩阵输入，以及 L0B 的分块转置](images/dma/copy_l1_to_l0.svg)
+
+在 Ascend950 上，Cube 从 NZ 布局的 L0A 读取左矩阵 A 的行，从 ZN 布局的 L0B 读取右矩阵 B 的列。图中 B 在 L1 按 NZ 存放，搬入 L0B 时用 `is_transpose=True` 交换分块内的行列顺序，使 B 同一列的 K 向元素在块内连续。 [Ascend C API · 关键分形格式详解](https://asc.gitcode.com/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.html) · [asc_copy_l12l0b_trans](https://asc.gitcode.com/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_trans_arch_3510.html#功能说明)
 
 仓库测试：[tla_ut/dma/copy.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/dma/copy.py#L42)。
 

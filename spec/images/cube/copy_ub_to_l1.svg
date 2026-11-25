@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="407" viewBox="0 0 1120 407" role="img" aria-labelledby="title desc">
+  <title id="title">copy_ub_to_l1 · 三行二维搬运</title>
+  <desc id="desc">UB 到 L1 逐行搬运四个带编号的 32B 数据块。UB 三行的行首字节偏移为 0、160、320，L1 为 0、192、384。每行末尾的空白格在 UB 占 32B，在 L1 占 64B，构成两侧行间距的差异。</desc>
+  <style>
+    text { font-family: Arial, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #263747; font-size: 26px; }
+    .heading { font-weight: bold; }
+    .note { font-size: 21px; }
+    .cell { stroke: #263747; stroke-width: 1.8; }
+    .arrow { fill: none; stroke: #582877; stroke-width: 3; marker-end: url(#head); }
+  </style>
+  <defs>
+    <marker id="head" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L10 4L0 8Z" fill="#582877"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="407" fill="#FFFFFF"/>
+  <text x="311" y="44" text-anchor="middle" class="heading">src · UB</text>
+  <text x="889" y="44" text-anchor="middle" class="heading">dst · L1</text>
+  <text x="311" y="76" text-anchor="middle" class="note">行间距 160B</text>
+  <text x="889" y="76" text-anchor="middle" class="note">行间距 192B</text>
+  <text x="134" y="76" text-anchor="end" class="note">行首偏移</text>
+  <text x="681" y="76" text-anchor="end" class="note">行首偏移</text>
+  <rect class="cell" x="156" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="218" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="280" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="342" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="404" y="111" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="156" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="218" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="280" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="342" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="404" y="193" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="156" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="218" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="280" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="342" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="404" y="275" width="62" height="52" fill="#FFFFFF"/>
+  <text x="187" y="146" text-anchor="middle">0</text>
+  <text x="249" y="146" text-anchor="middle">1</text>
+  <text x="311" y="146" text-anchor="middle">2</text>
+  <text x="373" y="146" text-anchor="middle">3</text>
+  <text x="187" y="228" text-anchor="middle">4</text>
+  <text x="249" y="228" text-anchor="middle">5</text>
+  <text x="311" y="228" text-anchor="middle">6</text>
+  <text x="373" y="228" text-anchor="middle">7</text>
+  <text x="187" y="310" text-anchor="middle">8</text>
+  <text x="249" y="310" text-anchor="middle">9</text>
+  <text x="311" y="310" text-anchor="middle">10</text>
+  <text x="373" y="310" text-anchor="middle">11</text>
+  <text x="134" y="145" text-anchor="end" class="note">+0B</text>
+  <text x="134" y="227" text-anchor="end" class="note">+160B</text>
+  <text x="134" y="309" text-anchor="end" class="note">+320B</text>
+  <rect class="cell" x="703" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="765" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="827" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="889" y="111" width="62" height="52" fill="#E1EFDE"/>
+  <rect class="cell" x="951" y="111" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="1013" y="111" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="703" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="765" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="827" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="889" y="193" width="62" height="52" fill="#D5E8F6"/>
+  <rect class="cell" x="951" y="193" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="1013" y="193" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="703" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="765" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="827" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="889" y="275" width="62" height="52" fill="#F8E6B8"/>
+  <rect class="cell" x="951" y="275" width="62" height="52" fill="#FFFFFF"/>
+  <rect class="cell" x="1013" y="275" width="62" height="52" fill="#FFFFFF"/>
+  <text x="734" y="146" text-anchor="middle">0</text>
+  <text x="796" y="146" text-anchor="middle">1</text>
+  <text x="858" y="146" text-anchor="middle">2</text>
+  <text x="920" y="146" text-anchor="middle">3</text>
+  <text x="734" y="228" text-anchor="middle">4</text>
+  <text x="796" y="228" text-anchor="middle">5</text>
+  <text x="858" y="228" text-anchor="middle">6</text>
+  <text x="920" y="228" text-anchor="middle">7</text>
+  <text x="734" y="310" text-anchor="middle">8</text>
+  <text x="796" y="310" text-anchor="middle">9</text>
+  <text x="858" y="310" text-anchor="middle">10</text>
+  <text x="920" y="310" text-anchor="middle">11</text>
+  <text x="681" y="145" text-anchor="end" class="note">+0B</text>
+  <text x="681" y="227" text-anchor="end" class="note">+192B</text>
+  <text x="681" y="309" text-anchor="end" class="note">+384B</text>
+  <path class="arrow" d="M486 137H593"/>
+  <path class="arrow" d="M486 219H593"/>
+  <path class="arrow" d="M486 301H593"/>
+  <text x="560" y="370" text-anchor="middle" class="note">每格为 32B。箭头对应四个带编号的块，空白格只标示行间的空隙。</text>
+</svg>

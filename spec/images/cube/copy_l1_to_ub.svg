@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="434" viewBox="0 0 1120 434" role="img" aria-labelledby="title desc">
+  <title id="title">copy_l1_to_ub · NZ → ND</title>
+  <desc id="desc">左侧 L1 按 NZ 分块存放，斜箭头从元素偏移 07 接到 08。右侧 UB 按 ND 逐行存放。首行第三列的元素从 L1 偏移 08 搬到 UB 偏移 02。</desc>
+  <style>
+    text { font-family: Arial, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #263747; font-size: 26px; }
+    .heading { font-weight: bold; }
+    .note { font-size: 21px; }
+    .cell { fill: #D5E8F6; stroke: #263747; stroke-width: 1.8; }
+    .block-edge { fill: none; stroke: #263747; stroke-width: 3; }
+    .trace { fill: none; stroke: #582877; stroke-width: 2.4; marker-mid: url(#small-head); marker-end: url(#small-head); }
+    .connector { fill: none; stroke: #582877; stroke-width: 3; }
+    .arrow { fill: none; stroke: #582877; stroke-width: 3; marker-end: url(#head); }
+    .index { stroke: #D5E8F6; stroke-width: 4; stroke-linejoin: round; paint-order: stroke; }
+  </style>
+  <defs>
+    <marker id="head" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="12" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L12 5L0 10Z" fill="#582877"/>
+    </marker>
+    <marker id="small-head" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="8" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L8 3L0 6Z" fill="#582877"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="434" fill="#FFFFFF"/>
+  <g id="src-nz">
+    <text x="268" y="43" text-anchor="middle" class="heading">src · L1 · NZ</text>
+    <text x="268" y="77" text-anchor="middle" class="note">块间按列，块内按行</text>
+    <rect class="cell" x="116" y="112" width="76" height="64"/>
+    <rect class="cell" x="192" y="112" width="76" height="64"/>
+    <rect class="cell" x="268" y="112" width="76" height="64"/>
+    <rect class="cell" x="344" y="112" width="76" height="64"/>
+    <rect class="cell" x="116" y="176" width="76" height="64"/>
+    <rect class="cell" x="192" y="176" width="76" height="64"/>
+    <rect class="cell" x="268" y="176" width="76" height="64"/>
+    <rect class="cell" x="344" y="176" width="76" height="64"/>
+    <rect class="cell" x="116" y="240" width="76" height="64"/>
+    <rect class="cell" x="192" y="240" width="76" height="64"/>
+    <rect class="cell" x="268" y="240" width="76" height="64"/>
+    <rect class="cell" x="344" y="240" width="76" height="64"/>
+    <rect class="cell" x="116" y="304" width="76" height="64"/>
+    <rect class="cell" x="192" y="304" width="76" height="64"/>
+    <rect class="cell" x="268" y="304" width="76" height="64"/>
+    <rect class="cell" x="344" y="304" width="76" height="64"/>
+    <path class="block-edge" d="M116 240H420M268 112V368"/>
+    <path class="trace" d="M128 161H256L128 225H256L128 289H256L128 353H242"/>
+    <path class="trace" d="M294 161H408L280 225H408L280 289H408L280 353H408"/>
+    <path class="connector" d="M242 353L281 209L294 161" marker-mid="url(#head)"/>
+    <text x="154" y="144" text-anchor="middle" class="index">00</text>
+    <text x="230" y="144" text-anchor="middle" class="index">01</text>
+    <text x="306" y="144" text-anchor="middle" class="index">08</text>
+    <text x="382" y="144" text-anchor="middle" class="index">09</text>
+    <text x="154" y="208" text-anchor="middle" class="index">02</text>
+    <text x="230" y="208" text-anchor="middle" class="index">03</text>
+    <text x="306" y="208" text-anchor="middle" class="index">10</text>
+    <text x="382" y="208" text-anchor="middle" class="index">11</text>
+    <text x="154" y="272" text-anchor="middle" class="index">04</text>
+    <text x="230" y="272" text-anchor="middle" class="index">05</text>
+    <text x="306" y="272" text-anchor="middle" class="index">12</text>
+    <text x="382" y="272" text-anchor="middle" class="index">13</text>
+    <text x="154" y="336" text-anchor="middle" class="index">06</text>
+    <text x="230" y="336" text-anchor="middle" class="index">07</text>
+    <text x="306" y="336" text-anchor="middle" class="index">14</text>
+    <text x="382" y="336" text-anchor="middle" class="index">15</text>
+  </g>
+  <g id="dst-nd">
+    <text x="852" y="43" text-anchor="middle" class="heading">dst · UB · ND</text>
+    <text x="852" y="77" text-anchor="middle" class="note">整行从左到右，行从上到下</text>
+    <rect class="cell" x="700" y="112" width="76" height="64"/>
+    <rect class="cell" x="776" y="112" width="76" height="64"/>
+    <rect class="cell" x="852" y="112" width="76" height="64"/>
+    <rect class="cell" x="928" y="112" width="76" height="64"/>
+    <rect class="cell" x="700" y="176" width="76" height="64"/>
+    <rect class="cell" x="776" y="176" width="76" height="64"/>
+    <rect class="cell" x="852" y="176" width="76" height="64"/>
+    <rect class="cell" x="928" y="176" width="76" height="64"/>
+    <rect class="cell" x="700" y="240" width="76" height="64"/>
+    <rect class="cell" x="776" y="240" width="76" height="64"/>
+    <rect class="cell" x="852" y="240" width="76" height="64"/>
+    <rect class="cell" x="928" y="240" width="76" height="64"/>
+    <rect class="cell" x="700" y="304" width="76" height="64"/>
+    <rect class="cell" x="776" y="304" width="76" height="64"/>
+    <rect class="cell" x="852" y="304" width="76" height="64"/>
+    <rect class="cell" x="928" y="304" width="76" height="64"/>
+    <path class="trace" d="M712 161H992L712 225H992L712 289H992L712 353H992"/>
+    <text x="738" y="144" text-anchor="middle" class="index">00</text>
+    <text x="814" y="144" text-anchor="middle" class="index">01</text>
+    <text x="890" y="144" text-anchor="middle" class="index">02</text>
+    <text x="966" y="144" text-anchor="middle" class="index">03</text>
+    <text x="738" y="208" text-anchor="middle" class="index">04</text>
+    <text x="814" y="208" text-anchor="middle" class="index">05</text>
+    <text x="890" y="208" text-anchor="middle" class="index">06</text>
+    <text x="966" y="208" text-anchor="middle" class="index">07</text>
+    <text x="738" y="272" text-anchor="middle" class="index">08</text>
+    <text x="814" y="272" text-anchor="middle" class="index">09</text>
+    <text x="890" y="272" text-anchor="middle" class="index">10</text>
+    <text x="966" y="272" text-anchor="middle" class="index">11</text>
+    <text x="738" y="336" text-anchor="middle" class="index">12</text>
+    <text x="814" y="336" text-anchor="middle" class="index">13</text>
+    <text x="890" y="336" text-anchor="middle" class="index">14</text>
+    <text x="966" y="336" text-anchor="middle" class="index">15</text>
+  </g>
+  <path class="arrow" d="M452 236H668"/>
+  <text x="560" y="211" text-anchor="middle" class="heading">NZ → ND</text>
+  <text x="560" y="407" text-anchor="middle" class="note">数字是各自布局中的元素偏移，折线示意存放顺序。NZ 用 2 × 2 分块示意，实际为 16 × C。</text>
+</svg>

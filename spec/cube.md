@@ -26,6 +26,10 @@
 - 同步：多个 AIV 写共享 L1 时，目的范围不得重叠；AIV 写入后供 AIC 读取前须建立跨核同步。
 - 填充：不提供 `pad_mode`、`pad_value`，不自动补齐非对齐数据。
 
+![UB 到 L1 的三行搬运，UB 每行四个有效块加一个空白格，L1 每行四个有效块加两个空白格](images/cube/copy_ub_to_l1.svg)
+
+将 UB 中的有效数据逐行复制到 L1，保持每行内的数据顺序。示例中每行搬运四个 `32B` 数据块，共 `128B`。源行步长为 `160B`，目的行步长为 `192B`，每一行分别按源和目的的步长定位。 [Ascend C API · asc_copy_ub2l1 图 2](https://asc.gitcode.com/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2l1.html#功能说明)
+
 **调用示例**
 
 ```python
@@ -56,6 +60,10 @@ def example(src, dst):
 - 长度：按完整分块搬运；源、目的有效元素数一致，不提供尾块填充。
 - 容量：访问跨度（含偏移及行间距）不得超过各自实际分配和可用 L1、UB 空间。
 - 同步：目标为 AIV sub-block 0 的 UB；AIC 发出跨核同步后，由该子块读取。
+
+![L1 NZ 到 UB ND 的转换，两侧按同一逻辑矩阵标出各自的元素偏移](images/cube/copy_l1_to_ub.svg)
+
+将 L1 中的矩阵搬到 UB，由块间按列排列、块内按行存放的 NZ 布局转换为逐行存放的 ND 布局。 [Ascend C 算子开发指南 · 数据格式](https://www.hiascend.com/doc_center/source/zh/canncommercial/900/programug/Ascendcopdevg/atlas_ascendc_10_0037.html)
 
 **调用示例**
 
@@ -130,6 +138,10 @@ def example(src, dst):
 - 容量：源、目的访问范围不得超出实际分配及各自可用容量。
 
 - AIC 完成写入后必须建立跨核依赖，再由对应 AIV 子块读取。单目标仅由指定子块消费；双目标分别消费对应行分块或列分块。
+
+![同一 AI Core 内，Fixpipe 将 L0C 矩阵按列或按行分送至两个 AIV 的 UB](images/cube/copy_l0c_to_ub.svg)
+
+同一 AI Core 内，Fixpipe 从 AIC 的 L0C 读取结果，写入两个 AIV 各自的 UB。`COLUMN_SPLIT` 向 UB0、UB1 分别写入左、右两半列，`ROW_SPLIT` 分别写入上、下两半行。两种切分的输出均为 ND。 [Ascend C API · 双目标模式](https://asc.gitcode.com/api/SIMD-API/basic_api/cube_compute_ISASI/cube_store_key_features/L0C_to_UB_dual_target_mode.html) · [Fixpipe 图 5](https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/910beta2/API/ascendcopapi/atlasascendc_api_07_0251.html#ZH-CN_TOPIC_0000002587659358__fig8810182815117)
 
 仓库测试：[tla_ut/cube/gemm_bias.py](https://github.com/triton-lang/triton-ascend/blob/074cf62907f815694a01e5cdc4ac78a90610ae82/third_party/ascend/unittest/tla_ut/cube/gemm_bias.py#L35)。
 
