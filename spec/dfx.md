@@ -37,7 +37,7 @@ def example(x):
 | --- | --- | --- | --- | --- | --- |
 | `prefix` | 输出文本前缀 | 编译期 str | 字符串 | — | 必填 |
 | `hex` | 是否按十六进制打印 | 编译期 bool | False / True | — | False |
-| `*args` | 依次打印的值 | 标量 / tla.buffer / buffer_access | 地址空间：GM / UB（缓冲区） | 在核作用域外调用。buffer_access 按单元素处理。 | 可省略 |
+| `*args` | 依次打印的值 | 标量 / tla.buffer / buffer_access | 地址空间：GM / UB（缓冲区）<br>Ascend950 前端拒绝 float64 标量 | 在核作用域外调用。buffer_access 按单元素处理。 | 可省略 |
 
 **调用示例**
 

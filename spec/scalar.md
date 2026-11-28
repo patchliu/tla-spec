@@ -116,7 +116,7 @@ def example(src, dst, index):
 | `true_value` | 条件为真时选取的值 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 输入。 | 必填 |
 | `false_value` | 条件为假时选取的值 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 输入。 | 必填 |
 
-两个分支表达式都会在选择前求值，未选中的分支也须满足类型约束。不能用 `select` 保护越界访存或副作用；需要条件执行时使用显式控制流。
+三个参数的类型范围均不含 float64。两个分支表达式都会在选择前求值，未选中的分支也须满足类型约束。不能用 `select` 保护越界访存或副作用；需要条件执行时使用显式控制流。
 
 **调用示例**
 
@@ -183,8 +183,8 @@ def example(x, y):
 
 | 参数名 | 参数含义 | 参数类型 | 合法参数范围 | 其他约束 | 默认值 |
 | --- | --- | --- | --- | --- | --- |
-| `input` | 待转换的标量 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 / float64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 输入。不支持将 `float64` 数值转换为更窄的浮点类型。在 Ascend950 上，运行时 `float64` 转整数仅支持等宽 `bitcast`。 | 必填 |
-| `dtype` | 目标类型 | 编译期标量 tl.dtype | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 不接受 bfloat16。按源和目标类型对执行 Triton cast。 | 必填 |
+| `input` | 待转换的标量 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 / float64 | 不接受 bfloat16。float64 不支持数值窄化到更窄的浮点类型。Ascend950 上，运行时 float64 转整数仅支持等宽 bitcast。 | 必填 |
+| `dtype` | 目标类型 | 编译期标量 tl.dtype | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16 / float16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 不接受 bfloat16。Ascend950 前端拒绝 float64 目标，包括数值转换和等宽 bitcast。 | 必填 |
 | `fp_downcast_rounding` | 浮点窄化舍入模式 | 编译期 str 或 None | None / rtne / rtz | 仅用于 Triton 支持的浮点窄化类型对。 | None |
 | `bitcast` | 是否按位重解释 | 编译期 bool | False / True | True 需要等位宽。 | False |
 
@@ -236,7 +236,7 @@ def example(x):
 | `max` | 上界 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 输入。不得为 NaN，且须满足 min ≤ max。 | 必填 |
 | `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | 仅作用于 x。NONE 下 NaN x 暂不支持；ALL 传播 x 的 NaN。 | tl.PropagateNan.NONE |
 
-约束：三个输入须共同形成浮点计算，全部为整数或 bool 的组合不支持。整数或 bool 可与本表允许的浮点输入混合，按 Triton 规则提升；每个原始输入均拒绝 float16 和 bfloat16。
+约束：三个输入须共同形成浮点计算，全部为整数或 bool 的组合不支持。整数或 bool 可与本表允许的浮点输入混合，按 Triton 规则提升；每个原始输入均拒绝 float16 和 bfloat16，Ascend950 前端还拒绝 float64。
 
 任一上下界为 NaN 或 `min > max` 时行为未定义，ALL 不改变该约束。调用者须保证运行时输入合法，接口不插入运行时 NaN 或边界检查。
 
@@ -312,7 +312,7 @@ def example():
 | `b` | 第二个操作数 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 输入。 | 必填 |
 | `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | NONE 下恰有一个输入为 NaN 的组合暂不支持；ALL 的语义是传播任一输入的 NaN。 | tl.PropagateNan.NONE |
 
-约束：float16 和 bfloat16 在类型提升前按原始操作数检查。
+约束：float16 和 bfloat16 在类型提升前按原始操作数检查。Ascend950 前端拒绝任一操作数为 float64 的调用。
 
 **调用示例**
 
@@ -360,7 +360,7 @@ def example():
 | `b` | 第二个操作数 | 标量（bool / int / float） | 数据类型：<br>B1：int1<br>B8：int8 / uint8<br>B16：int16 / uint16<br>B32：int32 / uint32 / float32<br>B64：int64 / uint64 | 按 Triton 标量转换和类型提升处理。不接受 bfloat16 或 float16 输入。 | 必填 |
 | `propagate_nan` | 选择 NaN 传播规则 | 编译期 tl.PropagateNan | NONE / ALL | NONE 下恰有一个输入为 NaN 的组合暂不支持；ALL 的语义是传播任一输入的 NaN。 | tl.PropagateNan.NONE |
 
-约束：float16 和 bfloat16 在类型提升前按原始操作数检查。
+约束：float16 和 bfloat16 在类型提升前按原始操作数检查。Ascend950 前端拒绝任一操作数为 float64 的调用。
 
 **调用示例**
 
